@@ -46,4 +46,39 @@ public class SqliteHelper {
 
 
     }
+    public void getAllMonHoc(String maSinhVien) {
+        mSqliteApp = new SqliteApp();
+
+        Connection connection = null;
+        // Tạo đối tượng Statement.
+        Statement statement = null;
+        try {
+            // Lấy ra đối tượng Connection kết nối vào DB.
+            connection = mSqliteApp.connectSQLiteApp();
+            statement = connection.createStatement();
+            String sql ="SELECT * FROM MONHOC mh,SinhVien sv WHERE sv.ID_SINHVIEN='"+maSinhVien+"'";
+
+            // Thực thi câu lệnh SQL trả về đối tượng ResultSet.
+            ResultSet rs = statement.executeQuery(sql);
+
+            // Duyệt trên kết quả trả về.
+            while (rs.next()) {// Di chuyển con trỏ xuống bản ghi kế tiếp.
+                String idMonHoc = rs.getString(1);
+                String tenMonHoc = rs.getString(2);
+                String idSinhVien = rs.getString(3);
+
+                System.out.println("--------------------");
+                System.out.println("ID Môn Học : " + idMonHoc);
+                System.out.println("Tên Môn Học : " + tenMonHoc);
+                System.out.println("ID Sinh Viên : " + idSinhVien);
+            }
+            // Đóng kết nối
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+
+    }
 }

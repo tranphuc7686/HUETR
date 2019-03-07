@@ -1,8 +1,8 @@
 package view;
 
+import service.CommandSv;
 import service.Mess;
 import service.SqliteHelper;
-import service.SubmitServerListener;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +33,7 @@ public class Client extends Thread  {
     private Socket socket;
     private static Mess mMess;
     private static String lenh = "1. Xem toàn bộ thông tin sinh viên \n2. Thêm điểm của sinh viên\n3. Sửa điểm của sinh viên\n4. Xóa điểm của sinh viên";
-
+    private static SqliteHelper mSqliteHelper ;
 
     public Client(String serverAndress, int serverPort) throws IOException {
         // tao mot socket tai dia chi serverAndress va serverPort
@@ -65,10 +65,10 @@ public class Client extends Thread  {
                 // convert mang buff sang kieu string
                 String message = new String(buff, 0, receivedBytes);
                 if(message.equals("ok")){
-                    SqliteHelper mSqliteHelper = new SqliteHelper();
+                    mSqliteHelper = new SqliteHelper();
                     mSqliteHelper.getAllSinhVien(mMess.getCauLenh());
                 }
-                lenh = "1. Xem toàn bộ thông tin sinh viên \n2. Thêm điểm của sinh viên\n3. Sửa điểm của sinh viên\n4. Xóa điểm của sinh viên";
+                lenh = CommandSv.COMMAND;
                 System.out.println(lenh);
             } catch (IOException e) {
                 System.out.println("Can't received");
@@ -87,15 +87,33 @@ public class Client extends Thread  {
                System.out.println(lenh);
 
                int message = scan.nextInt();
-               lenh = "waiting for server return......";
+               lenh = CommandSv.WAIT_FOR_SERVER;
                switch (message){
                    case 1 : {
-                       mMess = new Mess("Muốn xem tất cả sinh viên","Select * from SINHVIEN");
+                       mMess = new Mess("Người dùng muốn xem tất cả sinh viên", "Select * from SINHVIEN");
                        client.send(mMess.getContent());
                        break;
                    }
                    case 2 : {
-                       client.send("Muốn thêm điểm của sinh viên");
+                       mMess = new Mess("Sinh viên muốn thêm điểm cho môn học", "");
+                       System.out.println(CommandSv.NHAP_MASINHVIEN);
+                       int msv = scan.nextInt();
+                       System.out.println(CommandSv.CHON_MONHOC);
+                       mSqliteHelper = new SqliteHelper();
+                       mSqliteHelper.getAllMonHoc(msv+"");
+                       int number = scan.nextInt();
+                       String maMonHoc = scan.nextLine();
+                       System.out.println(maMonHoc + " fijfisdjfoisdo");
+                       System.out.println(CommandSv.NHAPDIEM_GIUAKI);
+                       double diemGiuaKi= scan.nextDouble();
+                       System.out.println(CommandSv.NHAPDIEM_CUOIKI);
+                       double diemCuoiKi = scan.nextDouble();
+
+                       // process
+                       String commandSql = "INSERT INTO DIEMTHI VALUES ('"+CommandSv.randomId()+"',"+diemGiuaKi+", "+diemCuoiKi+",'"+maMonHoc+"')";
+                       System.out.println(commandSql);
+                       mMess.setCauLenh(commandSql);
+                       client.send(mMess.getContent());
                        break;
                    }
                    case 3 : {

@@ -19,7 +19,6 @@ public class SqliteApp {
             String url = "jdbc:sqlite:" + getClass().getResource("/database/quanlisv.db").toString();
             sQLiteDataSource.setUrl(url);
             conn = sQLiteDataSource.getConnection();
-            System.out.println("connect success " + conn);
 
         } catch (ClassNotFoundException se) {
             System.out.println("" + se.getMessage());
