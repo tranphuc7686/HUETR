@@ -1,12 +1,10 @@
 package service;
 
 
-
-import java.net.Socket;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Socket;
 
 public class Worker extends Thread {
     private Socket socket;
@@ -14,7 +12,7 @@ public class Worker extends Thread {
     private OutputStream out;
     private SubmitServerListener mSubmitServerListener;
 
-    public void addSubmitListener( SubmitServerListener mSubmitServerListener){
+    public void addSubmitListener(SubmitServerListener mSubmitServerListener) {
         this.mSubmitServerListener = mSubmitServerListener;
     }
 
@@ -26,7 +24,7 @@ public class Worker extends Thread {
 
     // nhan tin nhan
     public void send(String message) throws IOException {
-        out.write( message.getBytes());
+        out.write(message.getBytes());
     }
 
     // gui tin nhan
@@ -40,6 +38,8 @@ public class Worker extends Thread {
                     break;
                 String message = new String(buff, 0, reveivedBytes);
                 System.out.println(message);
+                System.out.println(CommandSv.COMMAND_SERVER);
+
 
             }
         } catch (IOException e) {

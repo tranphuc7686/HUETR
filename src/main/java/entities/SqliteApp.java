@@ -4,25 +4,24 @@ import org.sqlite.SQLiteConfig;
 import org.sqlite.SQLiteDataSource;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class SqliteApp {
-
+    public final String DB_URL = "jdbc:sqlite:"+getClass().getResource("/database/quanlisv.db").toString();
+    public static final String DRIVER = "org.sqlite.JDBC";
     public Connection connectSQLiteApp() throws SQLException {
-        Connection conn = null;
-        try {
-            Class.forName("org.sqlite.JDBC");
-            SQLiteConfig config = new SQLiteConfig();
-            config.enableFullSync(true);
-            config.setReadOnly(false);
-            SQLiteDataSource sQLiteDataSource = new SQLiteDataSource(config);
-            String url = "jdbc:sqlite:" + getClass().getResource("/database/quanlisv.db").toString();
-            sQLiteDataSource.setUrl(url);
-            conn = sQLiteDataSource.getConnection();
 
-        } catch (ClassNotFoundException se) {
-            System.out.println("" + se.getMessage());
+        Connection connection = null;
+        try {
+            Class.forName(DRIVER);
+            SQLiteConfig config = new SQLiteConfig();
+            config.enforceForeignKeys(true);
+            connection = DriverManager.getConnection(DB_URL,config.toProperties());
+        } catch (SQLException ex) {}
+        catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
-        return conn;
+        return connection;
     }
 }

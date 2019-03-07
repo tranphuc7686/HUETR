@@ -11,8 +11,9 @@ public class CommandSv {
     public static final String NHAPDIEM_CUOIKI = "Mời nhập điểm Cuối Kì : ";
     public static final String NHAP_MASINHVIEN = "Mời nhập mã số Sinh Viên cần thao tác... ";
     public static final String SUBMIT_TO_SERVER = "Nhấn Enter để submit lên server.. ";
-    public static final String CHON_MONHOC = "Nhập mã môn học cần thêm điểm : ";
+    public static final String CHON_MONHOC = "Nhập mã môn học  : ";
     public static final String ERROR_DADANGKIDIEM = "Môn học đã được thêm điểm, xin vui lòng update điểm";
+    public static final String COMMAND_SERVER = "1.Đồng Ý \n2.Không Đồng Ý";
     public static String randomId(){
         String uuid = UUID.randomUUID().toString();
         return  uuid;

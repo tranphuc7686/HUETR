@@ -2,6 +2,7 @@ package entities;
 
 
 
+import service.CommandSv;
 import service.Worker;
 
 
@@ -63,8 +64,20 @@ private ServerSocket serverSocket;
                 worker.start();
 
                 while (true) {
-                    String message = scan.nextLine();
-                    worker.send(message);
+                    int message = scan.nextInt();
+                    switch (message){
+                        case 1 : {
+                            worker.send(CommandSv.ALLOW);
+                            break;
+                        }
+                        case 2 : {
+                            worker.send(CommandSv.NOT_ALLOW);
+                        }
+                        default: {
+                            System.out.println("Nhập sai lệnh vui lòng nhập lại...");
+                        }
+                    }
+
                 }
             } catch (IOException e) {
                 System.out.println("Can't connect");
@@ -74,7 +87,7 @@ private ServerSocket serverSocket;
 
     public static void main(String[] args) {
         try {
-            Server server = new Server(1996);
+            Server server = new Server(9999);
             server.waitForConnection();
             Scanner scan = new Scanner(System.in);
         } catch (IOException e) {

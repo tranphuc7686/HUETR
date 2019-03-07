@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client extends Thread  {
+public class Client extends Thread {
 //    public void connectClientSide(){
 //        try {
 //            Socket socket = new Socket("127.0.0.1", 9999);
@@ -32,8 +32,8 @@ public class Client extends Thread  {
     private OutputStream out;
     private Socket socket;
     private static Mess mMess;
-    private static String lenh = "1. Xem toàn bộ thông tin sinh viên \n2. Thêm điểm của sinh viên\n3. Sửa điểm của sinh viên\n4. Xóa điểm của sinh viên";
-    private static SqliteHelper mSqliteHelper ;
+    private static String lenh = "1. Xem toàn bộ thông tin sinh viên \n2. Thêm điểm của sinh viên\n3. Sửa điểm của sinh viên\n4. Xóa điểm của sinh viên ";
+    private static SqliteHelper mSqliteHelper;
 
     public Client(String serverAndress, int serverPort) throws IOException {
         // tao mot socket tai dia chi serverAndress va serverPort
@@ -64,7 +64,7 @@ public class Client extends Thread  {
                     break;
                 // convert mang buff sang kieu string
                 String message = new String(buff, 0, receivedBytes);
-                if(message.equals("ok")){
+                if (message.equals(CommandSv.ALLOW)) {
                     Client.layCauLenhTruyVan(mMess.getKieuCauLenh());
                 }
                 lenh = CommandSv.COMMAND;
@@ -74,83 +74,113 @@ public class Client extends Thread  {
             }
         }
     }
-    public static void requestToServer(){
+
+    public static void requestToServer() {
         Client client;
         try {
-            client = new Client("localhost", 1996);
+            client = new Client("localhost", 9999);
             Scanner scan = new Scanner(System.in);
             // tao ra 2 thread, 1 thread la de nhan tin nhan thead con lai la
             // thread main dung de gui tin nhan
             client.start();
-           while(true){
-               System.out.println(lenh);
+            while (true) {
+                String messageTemp = "";
+                int message = 0;
+                try {
+                    System.out.println(lenh);
+                    scan.nextLine();
+                    messageTemp = scan.nextLine();
+                    message = Integer.valueOf(messageTemp);
+                } catch (Exception e) {
+                    System.out.println("Nhập sai mời nhập lại...");
+                    e.printStackTrace();
+                    continue;
+                }
 
-               int message = scan.nextInt();
-               lenh = CommandSv.WAIT_FOR_SERVER;
-               switch (message){
-                   case 1 : {
-                       mMess = new Mess("Người dùng muốn xem tất cả sinh viên", "Select * from SINHVIEN",CommandSv.MODE_GETALL);
-                       client.send(mMess.getContent());
-                       break;
-                   }
-                   case 2 : {
-                       mMess = new Mess("Sinh viên muốn thêm điểm cho môn học", "",CommandSv.MODE_THEM);
-                       System.out.println(CommandSv.NHAP_MASINHVIEN);
-                       scan.nextLine();
-                       String msv = scan.nextLine();
-                       System.out.println(CommandSv.CHON_MONHOC);
-                       mSqliteHelper = new SqliteHelper();
-                       mSqliteHelper.getAllMonHoc(msv);
-                       String maMonHoc = scan.nextLine();
-                       System.out.println(CommandSv.NHAPDIEM_GIUAKI);
-                       double diemGiuaKi= scan.nextDouble();
-                       System.out.println(CommandSv.NHAPDIEM_CUOIKI);
-                       double diemCuoiKi = scan.nextDouble();
+                switch (message) {
+                    case 1: {
+                        lenh = CommandSv.WAIT_FOR_SERVER;
+                        mMess = new Mess("Người dùng muốn xem tất cả sinh viên", "Select * from SINHVIEN", CommandSv.MODE_GETALL);
+                        client.send(mMess.getContent());
+                        break;
+                    }
+                    case 2: {
+                        lenh = CommandSv.WAIT_FOR_SERVER;
+                        mMess = new Mess("Sinh viên muốn thêm điểm cho môn học", "", CommandSv.MODE_THEM);
+                        System.out.println(CommandSv.NHAP_MASINHVIEN);
+                        String msv = scan.nextLine();
+                        mSqliteHelper = new SqliteHelper();
+                        mSqliteHelper.getAllMonHoc(msv);
+                        String maMonHoc = scan.nextLine();
+                        System.out.println(CommandSv.NHAPDIEM_GIUAKI);
+                        double diemGiuaKi = scan.nextDouble();
+                        System.out.println(CommandSv.NHAPDIEM_CUOIKI);
+                        double diemCuoiKi = scan.nextDouble();
 
-                       // process
-                       String commandSql = "INSERT INTO DIEMTHI VALUES ("+diemGiuaKi+", "+diemCuoiKi+",'"+msv+"','"+maMonHoc+"')";
-                       System.out.println(commandSql);
-                       mMess.setCauLenh(commandSql);
-                       client.send(mMess.getContent());
-                       break;
-                   }
-                   case 3 : {
-                       client.send("Muốn sửa điểm của sinh viên");
-                       break;
-                   }
-                   case 4 : {
-                       client.send("Muốn xóa điểm của sinh viên");
-                       break;
-                   }
-                   default:
-                       System.out.println("Nhập sai mời nhập lại...");
+                        // process
+                        String commandSql = "INSERT INTO DIEMTHI(DIEM_GIUAKI,DIEM_CUOIKI,ID_MONHOC,ID_SINHVIEN) VALUES (" + diemGiuaKi + ", " + diemCuoiKi + ",'" + maMonHoc + "','" + msv + "')";
+                        mMess.setCauLenh(commandSql);
+                        client.send(mMess.getContent());
+                        break;
+                    }
+                    case 3: {
+                        lenh = CommandSv.WAIT_FOR_SERVER;
 
-               }
-           }
+                        mMess = new Mess("Người dùng muốn sửa điểm của sinh viên", "", CommandSv.MODE_SUA);
+                        System.out.println(CommandSv.NHAP_MASINHVIEN);
+                        String msv = scan.nextLine();
+                        mSqliteHelper = new SqliteHelper();
+                        mSqliteHelper.getAllMonHoc(msv);
+                        String maMonHoc = scan.nextLine();
+                        System.out.println(CommandSv.NHAPDIEM_GIUAKI);
+                        double diemGiuaKi = scan.nextDouble();
+                        System.out.println(CommandSv.NHAPDIEM_CUOIKI);
+                        double diemCuoiKi = scan.nextDouble();
+
+                        // process
+                        String commandSql = "UPDATE DIEMTHI " +
+                                "SET DIEM_GIUAKI=" + diemGiuaKi + ",DIEM_CUOIKI=" + diemCuoiKi + ",ID_MONHOC='" + maMonHoc + "',ID_SINHVIEN='" + msv + "'";
+                        mMess.setCauLenh(commandSql);
+                        client.send(mMess.getContent());
+                        break;
+                    }
+                    case 4: {
+                        lenh = CommandSv.WAIT_FOR_SERVER;
+                        client.send("Muốn xóa điểm của sinh viên");
+                        break;
+                    }
+                    default:
+                        System.out.println("Nhập sai mời nhập lại...");
+
+                }
+            }
 
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public static void layCauLenhTruyVan(int type){
-        switch (type){
-            case  1 : {
+
+    public static void layCauLenhTruyVan(int type) {
+        switch (type) {
+            case 1: {
                 mSqliteHelper = new SqliteHelper();
                 mSqliteHelper.getAllSinhVien(mMess.getCauLenh());
                 break;
             }
-            case  2 : {
+            case 2: {
                 mSqliteHelper = new SqliteHelper();
+
+                System.out.println(mMess.getCauLenh());
                 mSqliteHelper.addDiemMonHoc(mMess.getCauLenh());
                 break;
             }
-            case  3 : {
+            case 3: {
                 mSqliteHelper = new SqliteHelper();
                 mSqliteHelper.suaDiemMonHoc(mMess.getCauLenh());
                 break;
             }
-            case  4 : {
+            case 4: {
                 mSqliteHelper = new SqliteHelper();
                 mSqliteHelper.xoaDiemMonHoc(mMess.getCauLenh());
                 break;
