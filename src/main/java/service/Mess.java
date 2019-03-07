@@ -3,6 +3,7 @@ package service;
 public class Mess {
     private String content;
     private String cauLenh;
+    private int kieuCauLenh;
 
     public String getContent() {
         return content;
@@ -20,10 +21,20 @@ public class Mess {
         this.cauLenh = cauLenh;
     }
 
-    public Mess(String content, String cauLenh) {
+    public Mess(String content, String cauLenh,int kieuCauLenh) {
         this.content = content;
         this.cauLenh = cauLenh;
+        this.kieuCauLenh = kieuCauLenh;
     }
+
+    public int getKieuCauLenh() {
+        return kieuCauLenh;
+    }
+
+    public void setKieuCauLenh(int kieuCauLenh) {
+        this.kieuCauLenh = kieuCauLenh;
+    }
+
     public Mess() {
 
     }

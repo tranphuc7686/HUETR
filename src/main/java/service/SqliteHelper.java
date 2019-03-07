@@ -81,4 +81,90 @@ public class SqliteHelper {
 
 
     }
+    public void addDiemMonHoc(String caulenh) {
+        mSqliteApp = new SqliteApp();
+
+        Connection connection = null;
+        // Tạo đối tượng Statement.
+        Statement statement = null;
+        try {
+            // Lấy ra đối tượng Connection kết nối vào DB.
+            connection = mSqliteApp.connectSQLiteApp();
+            statement = connection.createStatement();
+            String sql =caulenh;
+
+            // Thực thi câu lệnh SQL trả về đối tượng ResultSet.
+            int rowsCount = statement.executeUpdate(sql);
+            if(rowsCount >= 1){
+                System.out.println("Thêm thành Công");
+            }
+            // Đóng kết nối
+            connection.close();
+        } catch (SQLException e) {
+            if(e.getErrorCode() == 19){
+                System.out.println(CommandSv.ERROR_DADANGKIDIEM);
+            }
+            e.printStackTrace();
+
+        }
+
+
+
+    }
+    public void suaDiemMonHoc(String caulenh) {
+        mSqliteApp = new SqliteApp();
+
+        Connection connection = null;
+        // Tạo đối tượng Statement.
+        Statement statement = null;
+        try {
+            // Lấy ra đối tượng Connection kết nối vào DB.
+            connection = mSqliteApp.connectSQLiteApp();
+            statement = connection.createStatement();
+            String sql =caulenh;
+
+            // Thực thi câu lệnh SQL trả về đối tượng ResultSet.
+            int rowsCount = statement.executeUpdate(sql);
+            if(rowsCount >= 1){
+                System.out.println("Sửa thành Công");
+            }
+            // Đóng kết nối
+            connection.close();
+        } catch (SQLException e) {
+            System.out.println("Sửa thất bài vì : " );
+            e.printStackTrace();
+
+        }
+
+
+
+    }
+    public void xoaDiemMonHoc(String caulenh) {
+        mSqliteApp = new SqliteApp();
+
+        Connection connection = null;
+        // Tạo đối tượng Statement.
+        Statement statement = null;
+        try {
+            // Lấy ra đối tượng Connection kết nối vào DB.
+            connection = mSqliteApp.connectSQLiteApp();
+            statement = connection.createStatement();
+            String sql =caulenh;
+
+            // Thực thi câu lệnh SQL trả về đối tượng ResultSet.
+            int rowsCount = statement.executeUpdate(sql);
+            if(rowsCount >= 1){
+                System.out.println("Xóa thành Công");
+            }
+            // Đóng kết nối
+            connection.close();
+        } catch (SQLException e) {
+            System.out.println("Xóa thất bài vì : " );
+            e.printStackTrace();
+
+        }
+
+
+
+    }
 }

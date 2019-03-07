@@ -65,8 +65,7 @@ public class Client extends Thread  {
                 // convert mang buff sang kieu string
                 String message = new String(buff, 0, receivedBytes);
                 if(message.equals("ok")){
-                    mSqliteHelper = new SqliteHelper();
-                    mSqliteHelper.getAllSinhVien(mMess.getCauLenh());
+                    Client.layCauLenhTruyVan(mMess.getKieuCauLenh());
                 }
                 lenh = CommandSv.COMMAND;
                 System.out.println(lenh);
@@ -90,27 +89,26 @@ public class Client extends Thread  {
                lenh = CommandSv.WAIT_FOR_SERVER;
                switch (message){
                    case 1 : {
-                       mMess = new Mess("Người dùng muốn xem tất cả sinh viên", "Select * from SINHVIEN");
+                       mMess = new Mess("Người dùng muốn xem tất cả sinh viên", "Select * from SINHVIEN",CommandSv.MODE_GETALL);
                        client.send(mMess.getContent());
                        break;
                    }
                    case 2 : {
-                       mMess = new Mess("Sinh viên muốn thêm điểm cho môn học", "");
+                       mMess = new Mess("Sinh viên muốn thêm điểm cho môn học", "",CommandSv.MODE_THEM);
                        System.out.println(CommandSv.NHAP_MASINHVIEN);
-                       int msv = scan.nextInt();
+                       scan.nextLine();
+                       String msv = scan.nextLine();
                        System.out.println(CommandSv.CHON_MONHOC);
                        mSqliteHelper = new SqliteHelper();
-                       mSqliteHelper.getAllMonHoc(msv+"");
-                       int number = scan.nextInt();
+                       mSqliteHelper.getAllMonHoc(msv);
                        String maMonHoc = scan.nextLine();
-                       System.out.println(maMonHoc + " fijfisdjfoisdo");
                        System.out.println(CommandSv.NHAPDIEM_GIUAKI);
                        double diemGiuaKi= scan.nextDouble();
                        System.out.println(CommandSv.NHAPDIEM_CUOIKI);
                        double diemCuoiKi = scan.nextDouble();
 
                        // process
-                       String commandSql = "INSERT INTO DIEMTHI VALUES ('"+CommandSv.randomId()+"',"+diemGiuaKi+", "+diemCuoiKi+",'"+maMonHoc+"')";
+                       String commandSql = "INSERT INTO DIEMTHI VALUES ("+diemGiuaKi+", "+diemCuoiKi+",'"+msv+"','"+maMonHoc+"')";
                        System.out.println(commandSql);
                        mMess.setCauLenh(commandSql);
                        client.send(mMess.getContent());
@@ -134,6 +132,31 @@ public class Client extends Thread  {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public static void layCauLenhTruyVan(int type){
+        switch (type){
+            case  1 : {
+                mSqliteHelper = new SqliteHelper();
+                mSqliteHelper.getAllSinhVien(mMess.getCauLenh());
+                break;
+            }
+            case  2 : {
+                mSqliteHelper = new SqliteHelper();
+                mSqliteHelper.addDiemMonHoc(mMess.getCauLenh());
+                break;
+            }
+            case  3 : {
+                mSqliteHelper = new SqliteHelper();
+                mSqliteHelper.suaDiemMonHoc(mMess.getCauLenh());
+                break;
+            }
+            case  4 : {
+                mSqliteHelper = new SqliteHelper();
+                mSqliteHelper.xoaDiemMonHoc(mMess.getCauLenh());
+                break;
+            }
+        }
+
     }
 
     public static void main(String[] args) {

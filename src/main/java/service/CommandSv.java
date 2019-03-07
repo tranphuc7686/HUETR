@@ -12,10 +12,16 @@ public class CommandSv {
     public static final String NHAP_MASINHVIEN = "Mời nhập mã số Sinh Viên cần thao tác... ";
     public static final String SUBMIT_TO_SERVER = "Nhấn Enter để submit lên server.. ";
     public static final String CHON_MONHOC = "Nhập mã môn học cần thêm điểm : ";
+    public static final String ERROR_DADANGKIDIEM = "Môn học đã được thêm điểm, xin vui lòng update điểm";
     public static String randomId(){
         String uuid = UUID.randomUUID().toString();
         return  uuid;
     }
+
+    public static final int MODE_GETALL = 1;
+    public static final int MODE_THEM = 2;
+    public static final int MODE_SUA = 3;
+    public static final int MODE_Xoa = 4;
 
 
 
