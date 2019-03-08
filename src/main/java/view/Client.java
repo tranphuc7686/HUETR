@@ -84,13 +84,12 @@ public class Client extends Thread {
             // thread main dung de gui tin nhan
             client.start();
             while (true) {
-                String messageTemp = "";
                 int message = 0;
                 try {
                     System.out.println(lenh);
-                    scan.nextLine();
-                    messageTemp = scan.nextLine();
-                    message = Integer.valueOf(messageTemp);
+
+                    message = scan.nextInt();
+
                 } catch (Exception e) {
                     System.out.println("Nhập sai mời nhập lại...");
                     e.printStackTrace();
@@ -108,6 +107,7 @@ public class Client extends Thread {
                         lenh = CommandSv.WAIT_FOR_SERVER;
                         mMess = new Mess("Sinh viên muốn thêm điểm cho môn học", "", CommandSv.MODE_THEM);
                         System.out.println(CommandSv.NHAP_MASINHVIEN);
+                        scan.nextLine();
                         String msv = scan.nextLine();
                         mSqliteHelper = new SqliteHelper();
                         mSqliteHelper.getAllMonHoc(msv);
@@ -128,6 +128,7 @@ public class Client extends Thread {
 
                         mMess = new Mess("Người dùng muốn sửa điểm của sinh viên", "", CommandSv.MODE_SUA);
                         System.out.println(CommandSv.NHAP_MASINHVIEN);
+                        scan.nextLine();
                         String msv = scan.nextLine();
                         mSqliteHelper = new SqliteHelper();
                         mSqliteHelper.getAllMonHoc(msv);
@@ -138,15 +139,27 @@ public class Client extends Thread {
                         double diemCuoiKi = scan.nextDouble();
 
                         // process
-                        String commandSql = "UPDATE DIEMTHI " +
-                                "SET DIEM_GIUAKI=" + diemGiuaKi + ",DIEM_CUOIKI=" + diemCuoiKi + ",ID_MONHOC='" + maMonHoc + "',ID_SINHVIEN='" + msv + "'";
+                        String commandSql = "UPDATE DIEMTHI SET DIEM_GIUAKI=" + diemGiuaKi + ",DIEM_CUOIKI=" + diemCuoiKi + " WHERE ID_MONHOC='" + maMonHoc + "' AND ID_SINHVIEN='" + msv + "'";
                         mMess.setCauLenh(commandSql);
                         client.send(mMess.getContent());
                         break;
                     }
                     case 4: {
                         lenh = CommandSv.WAIT_FOR_SERVER;
-                        client.send("Muốn xóa điểm của sinh viên");
+                        mMess = new Mess("Người dùng muốn Xóa điểm của sinh viên", "", 5);
+                        System.out.println(CommandSv.NHAP_MASINHVIEN);
+                        scan.nextLine();
+                        String msv = scan.nextLine();
+                        mSqliteHelper = new SqliteHelper();
+                        mSqliteHelper.getAllMonHoc(msv);
+                        String maMonHoc = scan.nextLine();
+
+
+                        // process
+                        String commandSql = "DELETE FROM DIEMTHI WHERE ID_SINHVIEN='"+ msv + "' AND ID_MONHOC='"+ maMonHoc + "'";
+                        System.out.println(commandSql);
+                        mMess.setCauLenh(commandSql);
+                        client.send(mMess.getContent());
                         break;
                     }
                     default:
@@ -183,6 +196,11 @@ public class Client extends Thread {
             case 4: {
                 mSqliteHelper = new SqliteHelper();
                 mSqliteHelper.xoaDiemMonHoc(mMess.getCauLenh());
+                break;
+            }
+            case 5: {
+                mSqliteHelper = new SqliteHelper();
+                mSqliteHelper.checkDb("select * from DIEMTHI");
                 break;
             }
         }

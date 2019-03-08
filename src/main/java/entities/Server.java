@@ -77,6 +77,7 @@ private ServerSocket serverSocket;
                             System.out.println("Nhập sai lệnh vui lòng nhập lại...");
                         }
                     }
+                    System.out.println("----------------------------------");
 
                 }
             } catch (IOException e) {

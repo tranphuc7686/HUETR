@@ -32,7 +32,7 @@ public class SqliteHelper {
                 String sdtSinhVien = rs.getString("SDT_SINHVIEN");
                 String emailSinhVien = rs.getString("EMAIL_SINHVIEN");
                 System.out.println("--------------------");
-                System.out.println("ID Sinh Viên : " + idSinhVien);
+                System.out.println("Mã Sinh Viên : " + idSinhVien);
                 System.out.println("Tên Sinh Viên : " + tenSinhVien);
                 System.out.println("SDT Sinh Viên : " + sdtSinhVien);
                 System.out.println("Email Sinh Viên : " + emailSinhVien);
@@ -57,11 +57,9 @@ public class SqliteHelper {
             // Lấy ra đối tượng Connection kết nối vào DB.
             connection = mSqliteApp.connectSQLiteApp();
             statement = connection.createStatement();
-            String sql = "SELECT MH.ID_MONHOC,MH.TEN_MONHOC,DT.DIEM_GIUAKI,DT.DIEM_CUOIKI,SV.TEN_SINHVIEN " +
-                    "   FROM MONHOC MH,SinhVien SV " +
-                    "LEFT JOIN DIEMTHI DT " +
-                    "ON SV.ID_SINHVIEN = DT.ID_SINHVIEN " +
-                    "WHERE SV.ID_SINHVIEN = '" + maSinhVien + "' ";
+            String sql = "SELECT MH.ID_MONHOC,MH.TEN_MONHOC,HIHI.DIEM_GIUAKI,HIHI.DIEM_CUOIKI,HIHI.TEN_SINHVIEN FROM MONHOC MH " +
+                    "LEFT JOIN (select * FROM DIEMTHI DT,SinhVien SV WHERE DT.ID_SINHVIEN = '"+ maSinhVien + "' AND SV.ID_SINHVIEN = DT.ID_SINHVIEN) HIHI " +
+                    "ON HIHI.ID_MONHOC = MH.ID_MONHOC";
 
             // Thực thi câu lệnh SQL trả về đối tượng ResultSet.
             ResultSet rs = statement.executeQuery(sql);
@@ -77,7 +75,7 @@ public class SqliteHelper {
                 String diemCuoiKi = rs.getString(4);
 
                 System.out.println("--------------------");
-                System.out.println("ID Môn Học : " + idMonHoc);
+                System.out.println("Mã Môn Học : " + idMonHoc);
                 System.out.println("Tên Môn Học : " + tenMonHoc);
                 System.out.println("Điểm Giữa Kì : " + (diemGiuaKi == null ? "Chưa có" : diemGiuaKi));
                 System.out.println("Điểm Cuối Kì : " + (diemCuoiKi == null ? "Chưa có" : diemCuoiKi));
@@ -105,7 +103,6 @@ public class SqliteHelper {
             connection = mSqliteApp.connectSQLiteApp();
             statement = connection.createStatement();
             String sql = caulenh;
-
             // Thực thi câu lệnh SQL trả về đối tượng ResultSet.
             int rowsCount = statement.executeUpdate(sql);
             if (rowsCount >= 1) {
