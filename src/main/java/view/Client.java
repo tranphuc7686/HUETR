@@ -32,7 +32,7 @@ public class Client extends Thread {
     private OutputStream out;
     private Socket socket;
     private static Mess mMess;
-    private static String lenh = "1. Xem toàn bộ thông tin sinh viên \n2. Thêm điểm của sinh viên\n3. Sửa điểm của sinh viên\n4. Xóa điểm của sinh viên ";
+    private static String lenh =CommandSv.COMMAND;
     private static SqliteHelper mSqliteHelper;
 
     public Client(String serverAndress, int serverPort) throws IOException {
@@ -67,6 +67,9 @@ public class Client extends Thread {
                 if (message.equals(CommandSv.ALLOW)) {
                     Client.layCauLenhTruyVan(mMess.getKieuCauLenh());
                 }
+                else{
+                    System.out.println(CommandSv.NOT_ALLOW);
+                }
                 lenh = CommandSv.COMMAND;
                 System.out.println(lenh);
             } catch (IOException e) {
@@ -88,12 +91,14 @@ public class Client extends Thread {
                 try {
                     System.out.println(lenh);
 
-                    message = scan.nextInt();
+                    message =Integer.valueOf(scan.nextLine());
 
                 } catch (Exception e) {
-                    System.out.println("Nhập sai mời nhập lại...");
-                    e.printStackTrace();
+                    if(!e.getMessage().equals("For input string: \"\"")){
+                        System.out.println("Nhập sai mời nhập lại...");
+                    }
                     continue;
+
                 }
 
                 switch (message) {
@@ -107,7 +112,7 @@ public class Client extends Thread {
                         lenh = CommandSv.WAIT_FOR_SERVER;
                         mMess = new Mess("Sinh viên muốn thêm điểm cho môn học", "", CommandSv.MODE_THEM);
                         System.out.println(CommandSv.NHAP_MASINHVIEN);
-                        scan.nextLine();
+
                         String msv = scan.nextLine();
                         mSqliteHelper = new SqliteHelper();
                         mSqliteHelper.getAllMonHoc(msv);
@@ -128,7 +133,7 @@ public class Client extends Thread {
 
                         mMess = new Mess("Người dùng muốn sửa điểm của sinh viên", "", CommandSv.MODE_SUA);
                         System.out.println(CommandSv.NHAP_MASINHVIEN);
-                        scan.nextLine();
+
                         String msv = scan.nextLine();
                         mSqliteHelper = new SqliteHelper();
                         mSqliteHelper.getAllMonHoc(msv);
@@ -146,9 +151,9 @@ public class Client extends Thread {
                     }
                     case 4: {
                         lenh = CommandSv.WAIT_FOR_SERVER;
-                        mMess = new Mess("Người dùng muốn Xóa điểm của sinh viên", "", 5);
+                        mMess = new Mess("Người dùng muốn Xóa điểm của sinh viên", "", CommandSv.MODE_Xoa);
                         System.out.println(CommandSv.NHAP_MASINHVIEN);
-                        scan.nextLine();
+
                         String msv = scan.nextLine();
                         mSqliteHelper = new SqliteHelper();
                         mSqliteHelper.getAllMonHoc(msv);
@@ -157,8 +162,18 @@ public class Client extends Thread {
 
                         // process
                         String commandSql = "DELETE FROM DIEMTHI WHERE ID_SINHVIEN='"+ msv + "' AND ID_MONHOC='"+ maMonHoc + "'";
-                        System.out.println(commandSql);
+
                         mMess.setCauLenh(commandSql);
+                        client.send(mMess.getContent());
+                        break;
+                    }
+                    case 5: {
+                        lenh = CommandSv.WAIT_FOR_SERVER;
+                        mMess = new Mess("Người dùng muốn xem điểm của sinh viên", "", CommandSv.MODE_XEMDIEM);
+                        System.out.println(CommandSv.NHAP_MASINHVIEN);
+
+                        String msv = scan.nextLine();
+                        mMess.setCauLenh(msv);
                         client.send(mMess.getContent());
                         break;
                     }
@@ -183,8 +198,6 @@ public class Client extends Thread {
             }
             case 2: {
                 mSqliteHelper = new SqliteHelper();
-
-                System.out.println(mMess.getCauLenh());
                 mSqliteHelper.addDiemMonHoc(mMess.getCauLenh());
                 break;
             }
@@ -200,7 +213,8 @@ public class Client extends Thread {
             }
             case 5: {
                 mSqliteHelper = new SqliteHelper();
-                mSqliteHelper.checkDb("select * from DIEMTHI");
+                mSqliteHelper.getAllMonHoc(mMess.getCauLenh());
+
                 break;
             }
         }

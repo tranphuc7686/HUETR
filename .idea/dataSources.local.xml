@@ -171,5 +171,12 @@
     <data-source name="quanlisv [11]" uuid="f4c51aee-937e-40b9-9f5f-2d7e6c7e5973">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" />
     </data-source>
+    <data-source name="quanlisv [12]" uuid="a8441aa5-d158-4e4a-a362-4953d339322a">
+      <database-info product="SQLite" version="3.25.1" jdbc-version="2.1" driver-name="SQLite JDBC" driver-version="3.25.1">
+        <identifier-quote-string>&quot;</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
+      <introspection-schemas>*:main</introspection-schemas>
+    </data-source>
   </component>
 </project>

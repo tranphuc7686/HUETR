@@ -58,15 +58,15 @@ public class SqliteHelper {
             connection = mSqliteApp.connectSQLiteApp();
             statement = connection.createStatement();
             String sql = "SELECT MH.ID_MONHOC,MH.TEN_MONHOC,HIHI.DIEM_GIUAKI,HIHI.DIEM_CUOIKI,HIHI.TEN_SINHVIEN FROM MONHOC MH " +
-                    "LEFT JOIN (select * FROM DIEMTHI DT,SinhVien SV WHERE DT.ID_SINHVIEN = '"+ maSinhVien + "' AND SV.ID_SINHVIEN = DT.ID_SINHVIEN) HIHI " +
+                    "LEFT JOIN (select DT.DIEM_GIUAKI,DT.DIEM_CUOIKI,SV.TEN_SINHVIEN,DT.ID_MONHOC FROM DIEMTHI DT,SinhVien SV WHERE DT.ID_SINHVIEN = '"+ maSinhVien + "' AND SV.ID_SINHVIEN = DT.ID_SINHVIEN) HIHI " +
                     "ON HIHI.ID_MONHOC = MH.ID_MONHOC";
 
             // Thực thi câu lệnh SQL trả về đối tượng ResultSet.
             ResultSet rs = statement.executeQuery(sql);
 
-            String tenSinhVien = rs.getString(5);
-
-            System.out.println("Tên Sinh Viên : " + tenSinhVien);
+//            String tenSinhVien = rs.getString("TEN_SINHVIEN");
+//
+//            System.out.println("Tên Sinh Viên : " + tenSinhVien);
             // Duyệt trên kết quả trả về.
             while (rs.next()) {// Di chuyển con trỏ xuống bản ghi kế tiếp.
                 String idMonHoc = rs.getString(1);

@@ -64,7 +64,17 @@ private ServerSocket serverSocket;
                 worker.start();
 
                 while (true) {
-                    int message = scan.nextInt();
+
+                    int message = 0;
+                    try {
+
+                        message =Integer.valueOf(scan.nextLine());
+
+                    } catch (Exception e) {
+                        System.out.println("Nhập sai mời nhập lại...");
+
+                        continue;
+                    }
                     switch (message){
                         case 1 : {
                             worker.send(CommandSv.ALLOW);
@@ -72,6 +82,7 @@ private ServerSocket serverSocket;
                         }
                         case 2 : {
                             worker.send(CommandSv.NOT_ALLOW);
+                            break;
                         }
                         default: {
                             System.out.println("Nhập sai lệnh vui lòng nhập lại...");
